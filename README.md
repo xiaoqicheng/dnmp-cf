@@ -1,1 +1,1 @@
-# dnmp-cf
+# 使用docker 部署LNMP+redis 服务器

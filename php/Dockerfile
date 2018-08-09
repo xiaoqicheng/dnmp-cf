@@ -55,8 +55,12 @@ RUN php -r "copy('https://install.phpcomposer.com/installer', 'composer-setup.ph
     && mv composer.phar /bin/composer \
     && composer config -g repo.packagist composer https://packagist.phpcomposer.com
 
-#Redis
-RUN mkdir -p /usr/src/php/ext/redis \
-    && curl -L https://github.com/phpredis/phpredis/archive/$PHPREDIS_VERSION.tar.gz | tar xvz -C /usr/src/php/ext/redis --strip 1 \
-    && echo 'redis' >> /usr/src/php-available-exts \
-    && docker-php-ext-install redis
+# Install Redis extension from source
+COPY ./redis-4.1.0.tgz /tmp/redis.tgz
+RUN ls /tmp
+RUN mkdir -p /tmp/redis \
+    && tar -xf /tmp/redis.tgz -C /tmp/redis --strip-components=1 \
+    && rm /tmp/redis.tgz \
+    && docker-php-ext-configure /tmp/redis --enable-redis \
+    && docker-php-ext-install /tmp/redis \
+    && rm -r /tmp/redis
