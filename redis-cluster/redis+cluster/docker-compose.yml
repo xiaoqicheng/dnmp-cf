@@ -1,0 +1,41 @@
+#一主两从+sentinel
+version: '3.7'
+services:
+  master:
+    image: redis:latest
+    hostname: redis-master
+    container_name: master1
+    command: redis-server /data/redis.conf
+    networks:
+      redis:
+        aliases:
+          - redis-master
+    volumes:
+      - ./redis-master:/data:rw
+      - /usr/share/zoneinfo/Asia/Shanghai:/etc/localtime:ro
+    ports:
+      - 6379:6379
+      - 16379:16379
+
+  slave01:
+    image: redis:latest
+    hostname: redis-slave01
+    container_name: slvae01
+    command: redis-server /data/redis.conf
+    networks:
+      redis:
+        aliases:
+          - redis-slave01
+    volumes:
+      - ./redis-slave01:/data:rw
+      - /usr/share/zoneinfo/Asia/Shanghai:/etc/localtime:ro
+    ports:
+      - 6380:6379
+      - 16380:16379
+
+
+networks:
+  redis:
+#    external: true
+    driver: bridge
+    name: redis
